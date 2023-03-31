@@ -109,6 +109,20 @@ function ShowStatsPage(){
 // App
 export default function App(){
 
+  let [questions, setQuestions] = useState(null);
+
+  useEffect(() => {
+    // Load movie data from database
+    fetch('/questions')
+    .then(response => response.json())
+    .then(setQuestions)
+    .catch(e => console.log(e.message))
+  }, [])
+
+  if (questions == null){
+    return <h3>Loading questions...</h3>
+  }
+
   return(
     <>
       <Routes>
