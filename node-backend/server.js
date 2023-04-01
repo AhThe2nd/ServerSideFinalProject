@@ -22,11 +22,10 @@ app.get('/questions', async (req, res) => {
     const db = client.db('trivia');
 
     // Test with current date
-    // const date = getCurrentDate();
-    // console.log("Current date: " + date);
+    const date = getCurrentDate();
 
     // For testing dates other than today
-    const date = '2023-4-1';
+    // const date = '2023-4-1';
 
 
     // Pull data from db and store
