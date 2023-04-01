@@ -2,11 +2,14 @@ import './App.css';
 import {Link} from "react-router-dom";
 import React, { useEffect, useRef, useState } from 'react';
 import {Routes, Route} from "react-router";
+import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import FormSelect from 'react-bootstrap/FormSelect'
+
+
 // Test comment
 // COMPONENTS///////////////////////////
 // Header Container
@@ -37,15 +40,6 @@ function AnswersContainer(){
       <Button>Answer 2</Button><br></br>
       <Button>Answer 3</Button><br></br>
       <Button>Answer 4</Button><br></br>
-    </Container>
-  )
-}
-
-// Next Question Button Container
-function NextQuestion(){
-  return(
-    <Container>
-      <Button>Next Question</Button><br></br>
     </Container>
   )
 }
@@ -84,34 +78,40 @@ function BackToGameButton(){
 
 // PAGES////////////////////////////////////////////////////
 // Show Question Page
+// hook to update questions
+function useUpdateQuestions(props){
+  const [questions, setQuestions] = useState(props.todays_questions.questions[sessionStorage.getItem("questionNumber")]);
+  console.log(questions);
+
+  return () => {
+
+    if (parseInt(sessionStorage.getItem("questionNumber")) == 4){
+      console.log("Max questions reached, redirect to results page");
+    }
+    else{
+      sessionStorage.setItem("questionNumber", parseInt(sessionStorage.getItem("questionNumber")) + 1);
+      setQuestions(questions => props.todays_questions.questions[parseInt(sessionStorage.getItem("questionNumber"))]);
+    }
+  }
+}
+
 function ShowQuestionsPage(props){
-  const questionText = props.todays_questions.questions[0].question;
-  const correctAnswer = props.todays_questions.questions[0].answer;
-  var answers = props.todays_questions.questions[0].incorrect;
-
-  // Combine all answers and assign them to a random button
-  answers.push(correctAnswer);
   
+  const currentQuestion = parseInt(sessionStorage.getItem("questionNumber"));
+  const updateQuestions = useUpdateQuestions(props);
 
-  // Shuffle the array
-  var allAnswersShuffled = shuffleArray(answers);
-  console.log(allAnswersShuffled);
+  // Extract all answers into an array and shuffle
+  let answers = props.todays_questions.questions[currentQuestion].incorrect;
+  const answer = props.todays_questions.questions[currentQuestion].answer;
+  answers.push(answer);
 
-  // Handle question number by creating a question number localstorage variable.
-  // If it doesn't exist it = 1
-  // Every time next question is hit it increments
-  // Question is based off this number
-  // When the results page is shown, set it to 0
-  // Set can play to false
-  // Set can play to true when it hits questions route
-  // If can play == false show countdown page
-  // Set it back to 1 when can play = true
-
-  // For Debug
-
-
-
+  //Shuffle the array
+  answers = shuffleArray(answers);
+  console.log("Answer below here");
+  console.log(answer);
   return(
+
+
     <>
       <Container>
         <h1>Trivia Time</h1>
@@ -120,24 +120,23 @@ function ShowQuestionsPage(props){
 
       
       <Container>
-        <h2>Question #{localStorage.getItem("questionNumber")}</h2>
-        <h3>{props.todays_questions.questions[0].question}</h3>
+        <h2>Question #{parseInt(sessionStorage.getItem("questionNumber")) + 1}</h2>
+        <h3></h3>
       </Container>
+
 
       
       <Container>
-        <Button id="A">{answers.pop()}</Button><br></br>
-        <Button id="B">{answers.pop()}</Button><br></br>
-        <Button id="C">{answers.pop()}</Button><br></br>
-        <Button id="D">{answers.pop()}</Button><br></br>
+          <Button id="A">{answers.pop()}</Button><br></br>
+          <Button id="B">{answers.pop()}</Button><br></br>
+          <Button id="C">{answers.pop()}</Button><br></br>
+          <Button id="D">{answers.pop()}</Button><br></br>
       </Container>
 
-      
       <Container>
-        <Button>Next Question</Button><br></br>
+        <Button onClick={updateQuestions}>Next Question</Button><br></br>
       </Container>
-
-      
+            
       <Container>
         <a href="/stats">
           <Button>Show stats</Button>
@@ -176,8 +175,8 @@ export default function App(){
     return <h3>Loading questions...</h3>
   }
 
-  if (localStorage.getItem("questionNumber") == null || localStorage.getItem("questionNumber") == 6){
-    localStorage.setItem("questionNumber", 1);
+  if (sessionStorage.getItem("questionNumber") == null){
+    sessionStorage.setItem("questionNumber", 0);
   }
 
   return(
@@ -216,6 +215,5 @@ function shuffleArray(array) {
     // And swap it with the current element.
     [array[index], array[randomIndex]] = [array[randomIndex], array[index]];
   }
-
   return array;
 }
