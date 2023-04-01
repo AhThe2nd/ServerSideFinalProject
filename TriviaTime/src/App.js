@@ -1,14 +1,8 @@
 import './App.css';
-import {Link} from "react-router-dom";
 import React, { useEffect, useRef, useState } from 'react';
 import {Routes, Route} from "react-router";
-import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import FormSelect from 'react-bootstrap/FormSelect'
-
 
 // Test comment
 // COMPONENTS///////////////////////////
@@ -70,7 +64,7 @@ function Stats(){
 
 function BackToGameButton(){
   return(
-    <a href="/">
+    <a href="/quiz">
       <Button>Back to game</Button>
     </a>
   )
@@ -96,19 +90,22 @@ function useUpdateQuestions(props){
 }
 
 function ShowQuestionsPage(props){
-  
+
+  // Get current question based on sessionStorage value
   const currentQuestion = parseInt(sessionStorage.getItem("questionNumber"));
   const updateQuestions = useUpdateQuestions(props);
+
+  // Extract question text
+  let questionText = props.todays_questions.questions[currentQuestion].question;
 
   // Extract all answers into an array and shuffle
   let answers = props.todays_questions.questions[currentQuestion].incorrect;
   const answer = props.todays_questions.questions[currentQuestion].answer;
   answers.push(answer);
 
-  //Shuffle the array
+  // Shuffle the array
   answers = shuffleArray(answers);
-  console.log("Answer below here");
-  console.log(answer);
+  
   return(
 
 
@@ -121,7 +118,7 @@ function ShowQuestionsPage(props){
       
       <Container>
         <h2>Question #{parseInt(sessionStorage.getItem("questionNumber")) + 1}</h2>
-        <h3></h3>
+        <h3>{questionText}</h3>
       </Container>
 
 
@@ -134,7 +131,7 @@ function ShowQuestionsPage(props){
       </Container>
 
       <Container>
-        <Button onClick={updateQuestions}>Next Question</Button><br></br>
+        <Button onClick={updateQuestions}>Next</Button><br></br>
       </Container>
             
       <Container>
@@ -142,6 +139,31 @@ function ShowQuestionsPage(props){
           <Button>Show stats</Button>
         </a>
       </Container>
+    </>
+  )
+}
+
+// Home page
+function Home(){
+  return(
+    <>
+      <HeaderContainer/>
+      <h3>Time left until next round OR Welcome to trivia time! </h3>
+      <a href="/quiz">
+        <Button>Play Game!</Button>
+      </a>
+    </>
+  )
+}
+
+// Results page
+function Results(){
+  return(
+    <>
+      <h1>This is where the results will go!</h1>
+      <a href="/stats">
+          <Button>Show stats</Button>
+      </a>
     </>
   )
 }
@@ -172,7 +194,7 @@ export default function App(){
   }, [])
 
   if (questions == null){
-    return <h3>Loading questions...</h3>
+    return <h3>Loading...</h3>
   }
 
   if (sessionStorage.getItem("questionNumber") == null){
@@ -182,7 +204,9 @@ export default function App(){
   return(
     <>
       <Routes>
-        <Route path="/" element={<ShowQuestionsPage todays_questions={questions}/>}/>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/quiz" element={<ShowQuestionsPage todays_questions={questions}/>}/>
+        <Route path="/results" element={<Results/>}/>
         <Route path="/stats" element={<ShowStatsPage/>}/>
       </Routes>
     </>

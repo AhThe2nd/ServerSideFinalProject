@@ -7,11 +7,6 @@ const URL = "mongodb+srv://andrewthowell:6v839A1VWbQTQN76@andrewscluster.0inpxj7
 
 app.use(express.json());
 
-app.get('/message', (req, res) => {
-    console.log("Hello from back end!")
-    res.send({ express: 'Hello From Express' });
-});
-
 app.get('/questions', async (req, res) => {
     
     // Create client object and wait for connection
