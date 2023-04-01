@@ -20,7 +20,7 @@ function HeaderContainer(){
 }
 
 // Question Container
-function QuestionsContainer(){
+function QuestionsContainer(props){
   return(
     <Container>
       <h2>Question Number goes here</h2>
@@ -53,9 +53,11 @@ function NextQuestion(){
 // Show Stats Button Container
 function ShowStatsButton(){
   return(
-    <a href="/stats">
-      <Button>Show stats</Button>
-    </a>
+    <Container>
+      <a href="/stats">
+        <Button>Show stats</Button>
+      </a>
+    </Container>
   )
 }
 
@@ -82,14 +84,62 @@ function BackToGameButton(){
 
 // PAGES////////////////////////////////////////////////////
 // Show Question Page
-function ShowQuestionsPage(){
+function ShowQuestionsPage(props){
+  console.log(props.todays_questions.questions[0].question);
+  console.log(props.todays_questions.questions[0].answer);
+  console.log(props.todays_questions.questions[0].incorrect);
+
+  // Handle question number by creating a question number localstorage variable.
+  // If it doesn't exist it = 1
+  // Every time next question is hit it increments
+  // Question is based off this number
+  // When the results page is shown, set it to 0
+  // Set can play to false
+  // Set can play to true when it hits questions route
+  // If can play == false show countdown page
+  // Set it back to 1 when can play = true
+
+  // For Debug
+
+
+
   return(
     <>
-      <HeaderContainer/>
-      <QuestionsContainer/>
-      <AnswersContainer/>
-      <NextQuestion/>
-      <ShowStatsButton/>
+      <Container>
+        <h1>Trivia Time</h1>
+        <h3>{getCurrentDate()}</h3>
+      </Container>
+
+      
+      <Container>
+        <h2>Question #{localStorage.getItem("questionNumber")}</h2>
+        <h3>{props.todays_questions.questions[0].question}</h3>
+      </Container>
+
+      
+      <Container>
+        <Button id="A">Answer 1</Button><br></br>
+        <Button id="B">Answer 2</Button><br></br>
+        <Button id="C">Answer 3</Button><br></br>
+        <Button id="D">Answer 4</Button><br></br>
+      </Container>
+
+      
+      <Container>
+        <Button>Next Question</Button><br></br>
+      </Container>
+
+      
+      <Container>
+        <a href="/stats">
+          <Button>Show stats</Button>
+        </a>
+      </Container>
+
+      <Container>
+        <h1>Debug Container</h1>
+      </Container>
+
     </>
   )
 }
@@ -123,10 +173,14 @@ export default function App(){
     return <h3>Loading questions...</h3>
   }
 
+  if (localStorage.getItem("questionNumber") == null || localStorage.getItem("questionNumber") == 6){
+    localStorage.setItem("questionNumber", 1);
+  }
+
   return(
     <>
       <Routes>
-        <Route path="/" element={<ShowQuestionsPage/>}/>
+        <Route path="/" element={<ShowQuestionsPage todays_questions={questions}/>}/>
         <Route path="/stats" element={<ShowStatsPage/>}/>
       </Routes>
     </>

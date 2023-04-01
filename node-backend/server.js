@@ -21,12 +21,29 @@ app.get('/questions', async (req, res) => {
     // Set database
     const db = client.db('trivia');
 
+    // Test with current date
+    // const date = getCurrentDate();
+    // console.log("Current date: " + date);
+
+    // For testing dates other than today
+    const date = '2023-4-1';
+
+
     // Pull data from db and store
-    const triviaData = await db.collection('questions').find({}).toArray();
+    const triviaData = await db.collection('questions').findOne({date: date});
     res.json( triviaData );
-    console.log(triviaData);
 });
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
+
+// Standalone functions
+function getCurrentDate(){
+    let currentDate = new Date();
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth() + 1; //  Months are 0 indexed because somebody, for some reason, thought that was a good idea.
+    let day = currentDate.getDate();
+    let dateString = `${year}-${month}-${day}`;
+    return dateString;
+  }
