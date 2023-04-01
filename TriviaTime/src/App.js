@@ -85,9 +85,17 @@ function BackToGameButton(){
 // PAGES////////////////////////////////////////////////////
 // Show Question Page
 function ShowQuestionsPage(props){
-  console.log(props.todays_questions.questions[0].question);
-  console.log(props.todays_questions.questions[0].answer);
-  console.log(props.todays_questions.questions[0].incorrect);
+  const questionText = props.todays_questions.questions[0].question;
+  const correctAnswer = props.todays_questions.questions[0].answer;
+  var answers = props.todays_questions.questions[0].incorrect;
+
+  // Combine all answers and assign them to a random button
+  answers.push(correctAnswer);
+  
+
+  // Shuffle the array
+  var allAnswersShuffled = shuffleArray(answers);
+  console.log(allAnswersShuffled);
 
   // Handle question number by creating a question number localstorage variable.
   // If it doesn't exist it = 1
@@ -118,10 +126,10 @@ function ShowQuestionsPage(props){
 
       
       <Container>
-        <Button id="A">Answer 1</Button><br></br>
-        <Button id="B">Answer 2</Button><br></br>
-        <Button id="C">Answer 3</Button><br></br>
-        <Button id="D">Answer 4</Button><br></br>
+        <Button id="A">{answers.pop()}</Button><br></br>
+        <Button id="B">{answers.pop()}</Button><br></br>
+        <Button id="C">{answers.pop()}</Button><br></br>
+        <Button id="D">{answers.pop()}</Button><br></br>
       </Container>
 
       
@@ -135,11 +143,6 @@ function ShowQuestionsPage(props){
           <Button>Show stats</Button>
         </a>
       </Container>
-
-      <Container>
-        <h1>Debug Container</h1>
-      </Container>
-
     </>
   )
 }
@@ -199,3 +202,20 @@ function getCurrentDate(){
   return dateString;
 }
 
+
+function shuffleArray(array) {
+  let index = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (index != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * index);
+    index--;
+
+    // And swap it with the current element.
+    [array[index], array[randomIndex]] = [array[randomIndex], array[index]];
+  }
+
+  return array;
+}
