@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useEffect, useRef, useState } from 'react';
-import {Routes, Route} from "react-router";
+import {Router, Routes, Route, Navigate} from "react-router";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
@@ -16,112 +16,94 @@ function HeaderContainer(){
   )
 }
 
-// Question Container
-function QuestionsContainer(props){
-  return(
-    <Container>
-      <h2>Question Number goes here</h2>
-      <h3>Question text goes here</h3>
-    </Container>
-  )
-}
-
-// Answers Container
-function AnswersContainer(){
-  return(
-    <Container>
-      <Button>Answer 1</Button><br></br>
-      <Button>Answer 2</Button><br></br>
-      <Button>Answer 3</Button><br></br>
-      <Button>Answer 4</Button><br></br>
-    </Container>
-  )
-}
-
-// Show Stats Button Container
-function ShowStatsButton(){
-  return(
-    <Container>
-      <a href="/stats">
-        <Button>Show stats</Button>
-      </a>
-    </Container>
-  )
-}
-
 // Stats Container
 function Stats(){
+  let average = localStorage.getItem("allTimePoints") / localStorage.getItem("gamesPlayed");
+
   return(
     <>
       <h2>All-Time Statistics</h2>
-      <h3>Games Played: </h3>
-      <h3>Average Score: </h3>
-      <h3>Perfect Scores: </h3>
-      <h3>Lowest Score: </h3>
+      <h3>Games Played: {localStorage.getItem("gamesPlayed")}</h3>
+      <h3>Average Score: {average}</h3>
+      <h3>Perfect Scores: {localStorage.getItem("perfectGames")}</h3>
+      <h3>Lowest Score: {localStorage.getItem("lowestScore")}</h3>
     </>
   )
 }
 
 function BackToGameButton(){
   return(
-    <a href="/quiz">
-      <Button>Back to game</Button>
+    <a href="/">
+      <Button>Back</Button>
     </a>
   )
 }
 
 // PAGES////////////////////////////////////////////////////
 // Show Question Page
-// hook to update questions
+// Hook to update questions
 function useUpdateQuestions(props){
   const [questions, setQuestions] = useState(props.todays_questions.questions[sessionStorage.getItem("questionNumber")]);
-  console.log(questions);
 
   return () => {
+    // Increment question number
+    sessionStorage.setItem("questionNumber", parseInt(sessionStorage.getItem("questionNumber")) + 1);
 
-    if (parseInt(sessionStorage.getItem("questionNumber")) == 4){
-      console.log("Max questions reached, redirect to results page");
-    }
-    else{
-      sessionStorage.setItem("questionNumber", parseInt(sessionStorage.getItem("questionNumber")) + 1);
-      setQuestions(questions => props.todays_questions.questions[parseInt(sessionStorage.getItem("questionNumber"))]);
-    }
+    // Increment number of questions answered
+    sessionStorage.setItem("questionsAnswered", parseInt(sessionStorage.getItem("questionsAnswered")) + 1);
+    setQuestions(questions => props.todays_questions.questions[parseInt(sessionStorage.getItem("questionNumber"))]);
   }
 }
 
 function ShowQuestionsPage(props){
-
-  // Get current question based on sessionStorage value
-  const currentQuestion = parseInt(sessionStorage.getItem("questionNumber"));
   const updateQuestions = useUpdateQuestions(props);
+  var questionText = "";
+  var answers = [];
 
-  // Extract question text
-  let questionText = props.todays_questions.questions[currentQuestion].question;
+  // Check if we need to go to results page
+  if (parseInt(sessionStorage.getItem("questionsAnswered")) == 5){
+    console.log("HElllllooooo");
+    var showResults = true;
+    console.log("Max questions reached, redirect to results page");
+  }
+  else{
+    // Get current question based on sessionStorage value
+    const currentQuestion = parseInt(sessionStorage.getItem("questionNumber"));
 
-  // Extract all answers into an array and shuffle
-  let answers = props.todays_questions.questions[currentQuestion].incorrect;
-  const answer = props.todays_questions.questions[currentQuestion].answer;
-  answers.push(answer);
+    // Extract question text
+    questionText = props.todays_questions.questions[currentQuestion].question;
 
-  // Shuffle the array
-  answers = shuffleArray(answers);
-  
+    // Extract all answers into an array and shuffle
+    answers = props.todays_questions.questions[currentQuestion].incorrect;
+    const answer = props.todays_questions.questions[currentQuestion].answer;
+    answers.push(answer);
+
+    // Shuffle the array
+    answers = shuffleArray(answers);
+  }
+
+  // Conditionally return the components we want to render
+
+  // Show results if end of quiz
+  if (showResults){
+    return(
+      <Results/>
+    )
+  }
+  else{
+
+  // Show next question if not end of quiz
   return(
-
-
     <>
       <Container>
         <h1>Trivia Time</h1>
         <h3>{getCurrentDate()}</h3>
       </Container>
 
-      
       <Container>
         <h2>Question #{parseInt(sessionStorage.getItem("questionNumber")) + 1}</h2>
         <h3>{questionText}</h3>
       </Container>
-
-
       
       <Container>
           <Button id="A">{answers.pop()}</Button><br></br>
@@ -133,14 +115,9 @@ function ShowQuestionsPage(props){
       <Container>
         <Button onClick={updateQuestions}>Next</Button><br></br>
       </Container>
-            
-      <Container>
-        <a href="/stats">
-          <Button>Show stats</Button>
-        </a>
-      </Container>
     </>
   )
+  }
 }
 
 // Home page
@@ -152,6 +129,12 @@ function Home(){
       <a href="/quiz">
         <Button>Play Game!</Button>
       </a>
+
+      <Container>
+        <a href="/stats">
+          <Button>Show stats</Button>
+        </a>
+      </Container>
     </>
   )
 }
@@ -197,15 +180,57 @@ export default function App(){
     return <h3>Loading...</h3>
   }
 
-  if (sessionStorage.getItem("questionNumber") == null){
-    sessionStorage.setItem("questionNumber", 0);
+  // SETTING VARIABLES ON LOAD
+  // Create variable to track question number in session storage
+  sessionStorage.setItem("questionNumber", 0);
+  
+  // Create variable to track score of current game
+  sessionStorage.setItem("score", 0);
+
+  // Create variable to track number of submitted questions
+  sessionStorage.setItem("questionsAnswered", 0);
+
+  // Create variable to track number of games played if it doesn't exist
+  if (localStorage.getItem("gamesPlayed") == null){
+    localStorage.setItem("gamesPlayed", 0);
+  }
+
+  // Create variable to track all time total points
+  if (localStorage.getItem("allTimePoints") == null){
+    localStorage.setItem("allTimePoints", 0);
+  }
+
+  // Create variable to store perfect games
+  if (localStorage.getItem("perfectGames") == null){
+    localStorage.setItem("perfectGames", 0);
+  }
+
+  // Create a variable to store the lowest score
+  if (localStorage.getItem("lowestScore") == null){
+    localStorage.setItem("lowestScore", 0);
+  }
+
+  // Create a variable that store the last day that the user completed a game
+  if (localStorage.getItem("lastGameDate") == null){
+    localStorage.setItem("lastGameDate", 0);
+  }
+
+  // Create a variable in local storage to determine if the game can be played or not
+  // Condition 1: First time starting the app (also covers not having completed a game)
+  if (localStorage.getItem("canPlay") == null){
+    localStorage.setItem("canPlay", true);
+  }
+
+  // Condition 2: User has completed a previous game
+  else if (localStorage.getItem("canPlay") == false && getCurrentDate() != localStorage.getItem("lastGameDate")){
+    localStorage.setItem("canPlay", true);
   }
 
   return(
     <>
       <Routes>
         <Route path="/" element={<Home/>}/>
-        <Route path="/quiz" element={<ShowQuestionsPage todays_questions={questions}/>}/>
+        <Route path="/quiz/*" element={<ShowQuestionsPage todays_questions={questions}/>}/>
         <Route path="/results" element={<Results/>}/>
         <Route path="/stats" element={<ShowStatsPage/>}/>
       </Routes>
