@@ -62,9 +62,18 @@ function ShowQuestionsPage(props){
 
   // Check if we need to go to results page
   if (parseInt(sessionStorage.getItem("questionsAnswered")) == 5){
-    console.log("HElllllooooo");
+    // Set flag to show game results
     var showResults = true;
-    console.log("Max questions reached, redirect to results page");
+    
+    // Increment number of games played
+    localStorage.setItem("gamesPlayed", parseInt(localStorage.getItem("gamesPlayed")) + 1);
+
+    // Record the last time the player completed a game
+    localStorage.setItem("lastGameDate", getCurrentDate())
+
+    // Disable the player from playing again today
+    localStorage.setItem("canPlay", false);
+
   }
   else{
     // Get current question based on sessionStorage value
@@ -122,21 +131,40 @@ function ShowQuestionsPage(props){
 
 // Home page
 function Home(){
-  return(
-    <>
-      <HeaderContainer/>
-      <h3>Time left until next round OR Welcome to trivia time! </h3>
-      <a href="/quiz">
-        <Button>Play Game!</Button>
-      </a>
+  console.log("Can play value:")
+  console.log(localStorage.getItem("canPlay"));
 
-      <Container>
-        <a href="/stats">
-          <Button>Show stats</Button>
+  // Conditionally return components based on canPlay value (which is stored as a string now)
+  if (localStorage.getItem("canPlay") === "true"){
+    return(
+      <>
+        <HeaderContainer/>
+        <h3>Welcome to trivia time! </h3>
+        <a href="/quiz">
+          <Button>Play Game!</Button>
         </a>
-      </Container>
-    </>
-  )
+  
+        <Container>
+          <a href="/stats">
+            <Button>Show stats</Button>
+          </a>
+        </Container>
+      </>
+    )
+  }
+  else{
+    return(
+      <>
+        <HeaderContainer/>
+        <h3>Come back tomorrow to play again! </h3>
+        <Container>
+          <a href="/stats">
+            <Button>Show stats</Button>
+          </a>
+        </Container>
+      </>
+    )
+  }
 }
 
 // Results page
@@ -222,7 +250,7 @@ export default function App(){
   }
 
   // Condition 2: User has completed a previous game
-  else if (localStorage.getItem("canPlay") == false && getCurrentDate() != localStorage.getItem("lastGameDate")){
+  else if (localStorage.getItem("canPlay") == "false" && getCurrentDate() != localStorage.getItem("lastGameDate")){
     localStorage.setItem("canPlay", true);
   }
 
