@@ -89,6 +89,12 @@ function ShowQuestionsPage(props){
 
     // Shuffle the array
     answers = shuffleArray(answers);
+
+    // Set answers
+    var answerA = answers.pop()
+    var answerB = answers.pop()
+    var answerC = answers.pop()
+    var answerD = answers.pop()
   }
 
   // Conditionally return the components we want to render
@@ -114,11 +120,11 @@ function ShowQuestionsPage(props){
         <h3>{questionText}</h3>
       </Container>
       
-      <Container>
-          <Button id="A">{answers.pop()}</Button><br></br>
-          <Button id="B">{answers.pop()}</Button><br></br>
-          <Button id="C">{answers.pop()}</Button><br></br>
-          <Button id="D">{answers.pop()}</Button><br></br>
+      <Container onClick={(e) => console.log(e.target.value) }>
+          <Button value={answerA}>{answerA}</Button><br></br>
+          <Button value={answerB}>{answerB}</Button><br></br>
+          <Button value={answerC}>{answerC}</Button><br></br>
+          <Button value={answerD}>{answerD}</Button><br></br>
       </Container>
 
       <Container>
@@ -131,9 +137,6 @@ function ShowQuestionsPage(props){
 
 // Home page
 function Home(){
-  console.log("Can play value:")
-  console.log(localStorage.getItem("canPlay"));
-
   // Conditionally return components based on canPlay value (which is stored as a string now)
   if (localStorage.getItem("canPlay") === "true"){
     return(
