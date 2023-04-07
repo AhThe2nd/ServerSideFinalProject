@@ -1,6 +1,6 @@
 import './App.css';
-import React, { useEffect, useRef, useState } from 'react';
-import {Router, Routes, Route, Navigate} from "react-router";
+import React, { useEffect, useState } from 'react';
+import { Routes, Route } from "react-router";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
@@ -63,10 +63,12 @@ function ShowQuestionsPage(props){
   // Reset some variables
   var questionText = "";
   var answers = [];
+  var answerText;
   var successMessage = "";
 
   // Check if we need to go to results page
-  if (parseInt(sessionStorage.getItem("questionsAnswered")) == 5){
+  if (parseInt(sessionStorage.getItem("questionsAnswered")) === 5){
+    
     // Set flag to show game results
     var showResults = true;
     
@@ -80,7 +82,7 @@ function ShowQuestionsPage(props){
     localStorage.setItem("allTimePoints", parseInt(localStorage.getItem("allTimePoints")) + parseInt(sessionStorage.getItem("score")));
 
     // Record a perfect game
-    if (sessionStorage.getItem("score") == "5"){
+    if (sessionStorage.getItem("score") === "5"){
       localStorage.setItem("perfectGames", parseInt(localStorage.getItem("perfectGames")) + 1);
     }
 
@@ -89,6 +91,7 @@ function ShowQuestionsPage(props){
 
   }
   else{
+    
     // Set boolean for being allowed to select an answer
     var canPickAnswer = true;
 
@@ -98,12 +101,13 @@ function ShowQuestionsPage(props){
     // Extract question text
     questionText = props.todays_questions.questions[currentQuestion].question;
 
+    // Extract answer text
+    answerText = props.todays_questions.questions[currentQuestion].answer;
+
     // Extract all answers into an array and shuffle
     answers = props.todays_questions.questions[currentQuestion].incorrect;
-    sessionStorage.setItem("answer", props.todays_questions.questions[currentQuestion].answer);
-    const answer = sessionStorage.getItem("answer");
 
-    answers.push(answer);
+    answers.push(answerText);
 
     // Shuffle the array
     answers = shuffleArray(answers);
@@ -155,7 +159,7 @@ function ShowQuestionsPage(props){
         {
           var yourAnswer = e.target.value;
 
-          if (yourAnswer === sessionStorage.getItem("answer") & canPickAnswer === true){
+          if (yourAnswer === answerText & canPickAnswer === true){
           
           // Increment score
           sessionStorage.setItem("score", parseInt(sessionStorage.getItem("score")) + 1);
@@ -164,12 +168,12 @@ function ShowQuestionsPage(props){
           
         }
         else{
-          successMessage = "WRONG! The correct answer is " + sessionStorage.getItem("answer");
+          successMessage = "WRONG! The correct answer is " + answerText;
         }
       
         // Change boolean so a new answer can't be submitted
         canPickAnswer = false;
-        document.querySelector("#answer").innerHTML=successMessage;
+        document.querySelector("#answer").innerHTML = successMessage;
 
         }}>
           <Button value={answerA}>{answerA}</Button><br></br>
@@ -205,6 +209,9 @@ function Home(){
         <Container>
           <a href="/stats">
             <Button>Show stats</Button>
+          </a><br></br>
+          <a href="/admin">
+            <Button>Admin login</Button>
           </a>
         </Container>
       </>
@@ -218,6 +225,9 @@ function Home(){
         <Container>
           <a href="/stats">
             <Button>Show stats</Button>
+          </a><br></br>
+          <a href="/admin">
+            <Button>Admin login</Button>
           </a>
         </Container>
       </>
@@ -242,6 +252,16 @@ function ShowStatsPage(){
       <HeaderContainer/>
       <Stats/>
       <BackToGameButton/>
+    </>
+  )
+}
+
+// Administrator Route
+function Administration(){
+  return(
+    <>
+      <h1>Login</h1>
+      
     </>
   )
 }
@@ -301,7 +321,7 @@ export default function App(){
   }
 
   // Condition 2: User has completed a previous game
-  else if (localStorage.getItem("canPlay") == "false" && getCurrentDate() != localStorage.getItem("lastGameDate")){
+  else if (localStorage.getItem("canPlay") === "false" && getCurrentDate() !== localStorage.getItem("lastGameDate")){
     localStorage.setItem("canPlay", true);
   }
 
@@ -312,6 +332,7 @@ export default function App(){
         <Route path="/quiz/*" element={<ShowQuestionsPage todays_questions={questions}/>}/>
         <Route path="/results" element={<Results/>}/>
         <Route path="/stats" element={<ShowStatsPage/>}/>
+        <Route path="/admin" element={<Administration/>}/>
       </Routes>
     </>
       
@@ -335,7 +356,7 @@ function shuffleArray(array) {
     randomIndex;
 
   // While there remain elements to shuffle.
-  while (index != 0) {
+  while (index !== 0) {
     // Pick a remaining element.
     randomIndex = Math.floor(Math.random() * index);
     index--;
