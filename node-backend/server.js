@@ -1,9 +1,11 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const app = express();
 const port = 8000;
-const URL = "mongodb+srv://andrewthowell:6v839A1VWbQTQN76@andrewscluster.0inpxj7.mongodb.net/test";
+const URL = process.env.MONGO_CONNECT;
 
 app.use(express.json());
 

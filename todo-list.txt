@@ -1,13 +1,14 @@
- -- Add credentials to .env file
+ -- See if you can remove answer from session storage
  -- API backend routes for administrators
  -- Check requirements doc
+ -- Import date function from front end to back end instead of writing it twice...maybe?
  -- Clean code and add comments
+ -- Apply styles
+ -- Apply responsive styles possibly
+-- Better questions and clean questions
 
 
  End Game
- -- Apply styles
- -- Apply responsive styles
  -- Get domain
  -- Host on AWS
  -- SSL if I need it
- -- Better questions and clean questions
