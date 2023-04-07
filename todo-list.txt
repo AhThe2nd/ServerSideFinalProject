@@ -1,0 +1,14 @@
+ -- Ensure that once you click an answer the other buttons become unfunctional
+ -- Display a message saying you are correct or not
+ -- Ensure all stats are being tracked
+ -- Add credentials to .env file
+ -- Clean code and add comments
+
+
+ End Game
+ -- Apply styles
+ -- Apply responsive styles
+ -- Get domain
+ -- Host on AWS
+ -- SSL if I need it
+ -- Better questions and clean questions

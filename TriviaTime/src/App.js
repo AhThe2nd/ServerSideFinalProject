@@ -84,7 +84,9 @@ function ShowQuestionsPage(props){
 
     // Extract all answers into an array and shuffle
     answers = props.todays_questions.questions[currentQuestion].incorrect;
-    const answer = props.todays_questions.questions[currentQuestion].answer;
+    sessionStorage.setItem("answer", props.todays_questions.questions[currentQuestion].answer);
+    const answer = sessionStorage.getItem("answer");
+
     answers.push(answer);
 
     // Shuffle the array
@@ -101,8 +103,16 @@ function ShowQuestionsPage(props){
 
   // Show results if end of quiz
   if (showResults){
+    
+    // Set text depending on score
+    const score = sessionStorage.getItem("score");
+    const resultText = setResultText(score);
+
     return(
-      <Results/>
+      <>
+        <Results/>
+        <h2>{resultText}</h2>
+      </>
     )
   }
   else{
@@ -120,7 +130,17 @@ function ShowQuestionsPage(props){
         <h3>{questionText}</h3>
       </Container>
       
-      <Container onClick={(e) => console.log(e.target.value) }>
+      <Container onClick={(e) => 
+        {if (e.target.value === sessionStorage.getItem("answer")){
+          console.log("CORRECT!")
+          
+          // Increment score
+          sessionStorage.setItem("score", parseInt(sessionStorage.getItem("score")) + 1);
+        }
+        else{
+          console.log("INCORRECT!")
+        }
+        }}>
           <Button value={answerA}>{answerA}</Button><br></br>
           <Button value={answerB}>{answerB}</Button><br></br>
           <Button value={answerC}>{answerC}</Button><br></br>
@@ -174,9 +194,10 @@ function Home(){
 function Results(){
   return(
     <>
-      <h1>This is where the results will go!</h1>
+      <h1>Results</h1>
+      <h2>Today's Score: {sessionStorage.getItem("score")}/5</h2>
       <a href="/stats">
-          <Button>Show stats</Button>
+          <Button>Show All-time Stats</Button>
       </a>
     </>
   )
@@ -296,4 +317,31 @@ function shuffleArray(array) {
     [array[index], array[randomIndex]] = [array[randomIndex], array[index]];
   }
   return array;
+}
+
+function setResultText(score){
+  let text;
+  switch(parseInt(score)) {
+    case 0:
+      text = "Wow. Zero points. Embarassing...";
+      break;
+    case 1:
+      text = "Just 1 point hey? Well, you're not completely useless.";
+      break;
+    case 2:
+      text = "2 points is almost a pass...almost...(you still failed though)";
+      break;
+    case 3:
+      text = "Alright, alright, 3 points, not bad!";
+      break;
+    case 4:
+      text = "Well done with 4 points! I gotta make these questions harder.";
+      break;
+    case 5:
+      text = "A perfect score! Big, wrinkly brain over here!";
+      break;
+    default:
+      text = "Something has either gone horribly wrong or you're messing about with the session storage values."
+  }
+  return text;
 }
