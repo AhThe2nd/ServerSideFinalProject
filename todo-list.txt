@@ -1,7 +1,6 @@
- -- Ensure that once you click an answer the other buttons become unfunctional
- -- Display a message saying you are correct or not
- -- Ensure all stats are being tracked
  -- Add credentials to .env file
+ -- API backend routes for administrators
+ -- Check requirements doc
  -- Clean code and add comments
 
 

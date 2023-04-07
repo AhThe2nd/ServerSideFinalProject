@@ -18,7 +18,7 @@ function HeaderContainer(){
 
 // Stats Container
 function Stats(){
-  let average = localStorage.getItem("allTimePoints") / localStorage.getItem("gamesPlayed");
+  let average = (localStorage.getItem("allTimePoints") / localStorage.getItem("gamesPlayed")).toFixed(1);
 
   return(
     <>
@@ -26,7 +26,6 @@ function Stats(){
       <h3>Games Played: {localStorage.getItem("gamesPlayed")}</h3>
       <h3>Average Score: {average}</h3>
       <h3>Perfect Scores: {localStorage.getItem("perfectGames")}</h3>
-      <h3>Lowest Score: {localStorage.getItem("lowestScore")}</h3>
     </>
   )
 }
@@ -52,13 +51,19 @@ function useUpdateQuestions(props){
     // Increment number of questions answered
     sessionStorage.setItem("questionsAnswered", parseInt(sessionStorage.getItem("questionsAnswered")) + 1);
     setQuestions(questions => props.todays_questions.questions[parseInt(sessionStorage.getItem("questionNumber"))]);
+
+    // Empty out response message
+    document.querySelector("#answer").innerHTML="";
   }
 }
 
 function ShowQuestionsPage(props){
   const updateQuestions = useUpdateQuestions(props);
+  
+  // Reset some variables
   var questionText = "";
   var answers = [];
+  var successMessage = "";
 
   // Check if we need to go to results page
   if (parseInt(sessionStorage.getItem("questionsAnswered")) == 5){
@@ -71,11 +76,22 @@ function ShowQuestionsPage(props){
     // Record the last time the player completed a game
     localStorage.setItem("lastGameDate", getCurrentDate())
 
+    // Add score to all time points
+    localStorage.setItem("allTimePoints", parseInt(localStorage.getItem("allTimePoints")) + parseInt(sessionStorage.getItem("score")));
+
+    // Record a perfect game
+    if (sessionStorage.getItem("score") == "5"){
+      localStorage.setItem("perfectGames", parseInt(localStorage.getItem("perfectGames")) + 1);
+    }
+
     // Disable the player from playing again today
     localStorage.setItem("canPlay", false);
 
   }
   else{
+    // Set boolean for being allowed to select an answer
+    var canPickAnswer = true;
+
     // Get current question based on sessionStorage value
     const currentQuestion = parseInt(sessionStorage.getItem("questionNumber"));
 
@@ -103,7 +119,7 @@ function ShowQuestionsPage(props){
 
   // Show results if end of quiz
   if (showResults){
-    
+
     // Set text depending on score
     const score = sessionStorage.getItem("score");
     const resultText = setResultText(score);
@@ -112,6 +128,9 @@ function ShowQuestionsPage(props){
       <>
         <Results/>
         <h2>{resultText}</h2>
+        <a href="/stats">
+          <Button>Show All-time Stats</Button>
+      </a>
       </>
     )
   }
@@ -131,20 +150,36 @@ function ShowQuestionsPage(props){
       </Container>
       
       <Container onClick={(e) => 
-        {if (e.target.value === sessionStorage.getItem("answer")){
-          console.log("CORRECT!")
+
+        // This function contains all the logic for clicking or selecting an answer
+        {
+          var yourAnswer = e.target.value;
+
+          if (yourAnswer === sessionStorage.getItem("answer") & canPickAnswer === true){
           
           // Increment score
           sessionStorage.setItem("score", parseInt(sessionStorage.getItem("score")) + 1);
+
+          successMessage = "CORRECT!"
+          
         }
         else{
-          console.log("INCORRECT!")
+          successMessage = "WRONG! The correct answer is " + sessionStorage.getItem("answer");
         }
+      
+        // Change boolean so a new answer can't be submitted
+        canPickAnswer = false;
+        document.querySelector("#answer").innerHTML=successMessage;
+
         }}>
           <Button value={answerA}>{answerA}</Button><br></br>
           <Button value={answerB}>{answerB}</Button><br></br>
           <Button value={answerC}>{answerC}</Button><br></br>
           <Button value={answerD}>{answerD}</Button><br></br>
+      </Container>
+
+      <Container>
+        <h2 id="answer"></h2>
       </Container>
 
       <Container>
@@ -196,9 +231,6 @@ function Results(){
     <>
       <h1>Results</h1>
       <h2>Today's Score: {sessionStorage.getItem("score")}/5</h2>
-      <a href="/stats">
-          <Button>Show All-time Stats</Button>
-      </a>
     </>
   )
 }
@@ -255,11 +287,6 @@ export default function App(){
   // Create variable to store perfect games
   if (localStorage.getItem("perfectGames") == null){
     localStorage.setItem("perfectGames", 0);
-  }
-
-  // Create a variable to store the lowest score
-  if (localStorage.getItem("lowestScore") == null){
-    localStorage.setItem("lowestScore", 0);
   }
 
   // Create a variable that store the last day that the user completed a game
@@ -323,7 +350,7 @@ function setResultText(score){
   let text;
   switch(parseInt(score)) {
     case 0:
-      text = "Wow. Zero points. Embarassing...";
+      text = "Wow. Zero points. Embarrassing...";
       break;
     case 1:
       text = "Just 1 point hey? Well, you're not completely useless.";
