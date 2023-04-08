@@ -4,6 +4,14 @@ import { Routes, Route } from "react-router";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
+// Login imports
+import { BrowserRouter } from "react-router-dom";
+import { UserProvider } from "./contexts/user.context";
+import Admin from "./pages/Admin.page";
+import Login from "./pages/Login.page";
+import PrivateRoute from "./pages/PrivateRoute.page";
+import Signup from "./pages/Signup.page";
+
 // Test comment
 // COMPONENTS///////////////////////////
 // Header Container
@@ -210,9 +218,6 @@ function Home(){
           <a href="/stats">
             <Button>Show stats</Button>
           </a><br></br>
-          <a href="/admin">
-            <Button>Admin login</Button>
-          </a>
         </Container>
       </>
     )
@@ -226,9 +231,6 @@ function Home(){
           <a href="/stats">
             <Button>Show stats</Button>
           </a><br></br>
-          <a href="/admin">
-            <Button>Admin login</Button>
-          </a>
         </Container>
       </>
     )
@@ -252,16 +254,6 @@ function ShowStatsPage(){
       <HeaderContainer/>
       <Stats/>
       <BackToGameButton/>
-    </>
-  )
-}
-
-// Administrator Route
-function Administration(){
-  return(
-    <>
-      <h1>Login</h1>
-      
     </>
   )
 }
@@ -326,15 +318,22 @@ export default function App(){
   }
 
   return(
-    <>
-      <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/quiz/*" element={<ShowQuestionsPage todays_questions={questions}/>}/>
-        <Route path="/results" element={<Results/>}/>
-        <Route path="/stats" element={<ShowStatsPage/>}/>
-        <Route path="/admin" element={<Administration/>}/>
-      </Routes>
-    </>
+    
+      <UserProvider>
+          <Routes>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/quiz/*" element={<ShowQuestionsPage todays_questions={questions}/>}/>
+            <Route path="/results" element={<Results/>}/>
+            <Route path="/stats" element={<ShowStatsPage/>}/>
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/signup" element={<Signup />} />  
+
+            <Route element={<PrivateRoute />}>
+              <Route exact path="/admin" element={<Admin />} />
+            </Route>
+          </Routes>
+        </UserProvider>
+    
       
   );
 }
