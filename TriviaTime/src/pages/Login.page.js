@@ -96,7 +96,6 @@ const Login = () => {
    <Button variant="contained" color="primary" onClick={onSubmit}>
      Login
    </Button>
-   <p>Don't have an account? <Link to="/signup">Signup</Link></p>
  </form>
 }
  

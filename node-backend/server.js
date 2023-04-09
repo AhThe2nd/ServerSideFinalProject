@@ -30,6 +30,20 @@ app.get('/questions', async (req, res) => {
     res.json( triviaData );
 });
 
+// Empty the database
+app.delete('/empty', async (req, res) => {
+
+    // Create client object and wait for connection
+    const client = new MongoClient(URL);
+    await client.connect();
+
+    // Set database
+    const db = client.db('trivia');
+
+    // Remove all data from the database
+    db.collection('questions').deleteMany();
+})
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });

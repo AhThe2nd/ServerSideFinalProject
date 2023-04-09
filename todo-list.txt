@@ -1,12 +1,12 @@
- -- API backend routes for administrators
-    -- Button to drop entire database
-    -- File upload to repopulate database?
+ -- File upload to repopulate database
+
 
  -- Check requirements doc
  -- Import date function from front end to back end instead of writing it twice...maybe?
  -- Clean code and add comments
  -- Apply styles
  -- Apply responsive styles possibly
+ -- Ensure it looks good on all screens
  -- Better questions and clean questions
  -- Add Readme to repo
 

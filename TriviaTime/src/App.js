@@ -10,7 +10,6 @@ import { UserProvider } from "./contexts/user.context";
 import Admin from "./pages/Admin.page";
 import Login from "./pages/Login.page";
 import PrivateRoute from "./pages/PrivateRoute.page";
-import Signup from "./pages/Signup.page";
 
 // Test comment
 // COMPONENTS///////////////////////////
@@ -326,7 +325,6 @@ export default function App(){
             <Route path="/results" element={<Results/>}/>
             <Route path="/stats" element={<ShowStatsPage/>}/>
             <Route exact path="/login" element={<Login />} />
-            <Route exact path="/signup" element={<Signup />} />  
 
             <Route element={<PrivateRoute />}>
               <Route exact path="/admin" element={<Admin />} />

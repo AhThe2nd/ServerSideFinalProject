@@ -19,11 +19,27 @@ export default function Admin() {
      alert(error)
    }
  }
- 
+
+ const emptyDatabase = async () => {
+  alert("Database has been empted. Please upload a new questions JSON file in the proper format.");
+  const URL = '/empty';
+  fetch(URL, {method: 'DELETE'}).then((response) => {
+    if(!response.ok){
+      throw new Error('Something went wrong')
+    }
+  })
+  .catch((e) => {
+    console.log(e)
+  });
+ } 
  return (
    <>
-     <h1>Welcome to Expengo</h1>
-     <Button variant="contained" onClick={logOut}>Logout</Button>
+    <h1>Welcome, Administrator. Go ahead and administrate.</h1>
+    <Button variant="contained" onClick={emptyDatabase}>Empty Database</Button><br></br><br></br>
+    <h3>Upload New Questions</h3>
+    <input type="file"/><br/><br/>
+    <Button variant="contained">Upload</Button><br/><br/>
+    <Button variant="contained" onClick={logOut}>Logout</Button>
    </>
  )
 }
