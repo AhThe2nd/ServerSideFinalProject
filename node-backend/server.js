@@ -1,13 +1,16 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
-import * as dotenv from 'dotenv'
+import * as dotenv from 'dotenv';
+import bodyParser from 'body-parser';
 dotenv.config()
 
 const app = express();
 const port = 8000;
 const URL = process.env.MONGO_CONNECT;
+const jsonParser = bodyParser.json();
 
-app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ strict: false }))
 
 app.get('/questions', async (req, res) => {
     
@@ -30,8 +33,8 @@ app.get('/questions', async (req, res) => {
     res.json( triviaData );
 });
 
-// Empty the database
-app.delete('/empty', async (req, res) => {
+// Empty the database and reupload new questions from a JSON file
+app.post('/upload', async (req, res) => {
 
     // Create client object and wait for connection
     const client = new MongoClient(URL);
@@ -42,7 +45,29 @@ app.delete('/empty', async (req, res) => {
 
     // Remove all data from the database
     db.collection('questions').deleteMany();
-})
+
+    let data = req.body;
+    console.log(data);
+
+    /*
+    let scrubbed = data.replace(/\r?\n|\r/g, '');
+    console.log("SCRUBBED");
+    console.log(scrubbed);
+    */
+
+    // var obj = JSON.parse(data.replace(/\r?\n|\r/g, ''));
+
+    // Repopulate database with new questions
+    // console.log(obj);
+    try{
+        await db.collection('questions').insertMany(data);
+    } catch (e) {
+        console.log("Error");
+        console.log(e);
+    }
+
+});
+
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
