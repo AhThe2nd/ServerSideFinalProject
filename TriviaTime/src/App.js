@@ -3,23 +3,28 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route } from "react-router";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Login imports
-import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./contexts/user.context";
 import Admin from "./pages/Admin.page";
 import Login from "./pages/Login.page";
 import PrivateRoute from "./pages/PrivateRoute.page";
 
-// Test comment
+
 // COMPONENTS///////////////////////////
 // Header Container
 function HeaderContainer(){
   return(
-    <Container>
-      <h1>Trivia Time</h1>
-      <h3>{getCurrentDate()}</h3>
-    </Container>
+    <>
+      <Container>
+        <h1 style={{fontSize: 80}}>Trivia Time</h1><br/><br/>
+        <h3 style={{fontSize: 40}}>{getCurrentDate()}</h3>
+      </Container>
+    </>
+    
   )
 }
 
@@ -29,7 +34,7 @@ function Stats(){
 
   return(
     <>
-      <h2>All-Time Statistics</h2>
+      <h2>All-Time Statistics</h2><br/><br/>
       <h3>Games Played: {localStorage.getItem("gamesPlayed")}</h3>
       <h3>Average Score: {average}</h3>
       <h3>Perfect Scores: {localStorage.getItem("perfectGames")}</h3>
@@ -37,17 +42,22 @@ function Stats(){
   )
 }
 
+// Back to home button
 function BackToGameButton(){
   return(
-    <a href="/">
-      <Button>Back</Button>
-    </a>
+    <>
+      <br/><br/>
+      <a href="/">
+        <Button size="lg">Back</Button>
+      </a>
+    </>
+    
   )
 }
 
 // PAGES////////////////////////////////////////////////////
-// Show Question Page
-// Hook to update questions
+
+// This function updates several values every time the page is re-rendered.
 function useUpdateQuestions(props){
   const [questions, setQuestions] = useState(props.todays_questions.questions[sessionStorage.getItem("questionNumber")]);
 
@@ -64,7 +74,10 @@ function useUpdateQuestions(props){
   }
 }
 
+// Show Question Page
 function ShowQuestionsPage(props){
+  document.body.style = 'background: #C6D7FF;';
+
   const updateQuestions = useUpdateQuestions(props);
   
   // Reset some variables
@@ -111,9 +124,8 @@ function ShowQuestionsPage(props){
     // Extract answer text
     answerText = props.todays_questions.questions[currentQuestion].answer;
 
-    // Extract all answers into an array and shuffle
+    // Extract all answers into an array
     answers = props.todays_questions.questions[currentQuestion].incorrect;
-
     answers.push(answerText);
 
     // Shuffle the array
@@ -127,7 +139,6 @@ function ShowQuestionsPage(props){
   }
 
   // Conditionally return the components we want to render
-
   // Show results if end of quiz
   if (showResults){
 
@@ -137,11 +148,18 @@ function ShowQuestionsPage(props){
 
     return(
       <>
-        <Results/>
-        <h2>{resultText}</h2>
-        <a href="/stats">
-          <Button>Show All-time Stats</Button>
-      </a>
+        <Results/><br/><br/>
+        <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+          <Row>
+            <Col>
+            <h2>{resultText}</h2>
+            <a href="/stats"><br/><br/><br/><br/>
+              <Button size="lg">Show All-time Stats</Button>
+            </a>
+            </Col>
+          </Row>
+        </Container>
+        
       </>
     )
   }
@@ -150,17 +168,27 @@ function ShowQuestionsPage(props){
   // Show next question if not end of quiz
   return(
     <>
-      <Container>
-        <h1>Trivia Time</h1>
-        <h3>{getCurrentDate()}</h3>
-      </Container>
-
-      <Container>
-        <h2>Question #{parseInt(sessionStorage.getItem("questionNumber")) + 1}</h2>
-        <h3>{questionText}</h3>
+      <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+        <Row>
+          <Col>
+            <h1 style={{fontSize: 80}}>Trivia Time</h1>
+            <h3 style={{fontSize: 40}}>{getCurrentDate()}</h3><br/><br/>
+            <Container style={
+                        {
+                        borderRadius: 25,
+                        border: '5px solid rgba(0, 0, 0)',
+                        padding: 20,
+                        }}>
+              <h2 >Question #{parseInt(sessionStorage.getItem("questionNumber")) + 1}</h2>
+              <h3>{questionText}</h3>
+            </Container><br/><br/>
+            
+          </Col>
+        </Row>
+        
       </Container>
       
-      <Container onClick={(e) => 
+      <Container className="d-flex align-items-center justify-content-center text-center not-found-container" onClick={(e) => 
 
         // This function contains all the logic for clicking or selecting an answer
         {
@@ -175,7 +203,7 @@ function ShowQuestionsPage(props){
           
         }
         else{
-          successMessage = "WRONG! The correct answer is " + answerText;
+          successMessage = "WRONG!" + "\n\n" + "Correct answer: " + answerText;
         }
       
         // Change boolean so a new answer can't be submitted
@@ -183,18 +211,31 @@ function ShowQuestionsPage(props){
         document.querySelector("#answer").innerHTML = successMessage;
 
         }}>
-          <Button value={answerA}>{answerA}</Button><br></br>
-          <Button value={answerB}>{answerB}</Button><br></br>
-          <Button value={answerC}>{answerC}</Button><br></br>
-          <Button value={answerD}>{answerD}</Button><br></br>
+          <Row>
+            <Col className="d-grid gap-2">
+              <Button size="lg" value={answerA}>{answerA}</Button>
+              <Button size="lg" value={answerB}>{answerB}</Button>
+              <Button size="lg" value={answerC}>{answerC}</Button>
+              <Button size="lg" value={answerD}>{answerD}</Button><br></br>
+            </Col>
+          </Row>
+          
       </Container>
 
-      <Container>
-        <h2 id="answer"></h2>
+      <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+        <Row>
+          <Col>
+            <h2 id="answer"></h2><br></br>
+          </Col>
+        </Row>
       </Container>
 
-      <Container>
-        <Button onClick={updateQuestions}>Next</Button><br></br>
+      <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+        <Row>
+          <Col>
+            <Button size="lg" onClick={updateQuestions}>Next</Button><br></br>
+          </Col>
+        </Row>
       </Container>
     </>
   )
@@ -203,20 +244,26 @@ function ShowQuestionsPage(props){
 
 // Home page
 function Home(){
-  // Conditionally return components based on canPlay value (which is stored as a string now)
+  document.body.style = 'background: #C6D7FF;';
+
+  // Conditionally return components based on canPlay value
   if (localStorage.getItem("canPlay") === "true"){
     return(
       <>
-        <HeaderContainer/>
-        <h3>Welcome to trivia time! </h3>
-        <a href="/quiz">
-          <Button>Play Game!</Button>
-        </a>
-  
-        <Container>
-          <a href="/stats">
-            <Button>Show stats</Button>
-          </a><br></br>
+        <Container 
+        className="d-flex align-items-center justify-content-center text-center not-found-container">
+          <Row>
+            <Col>
+            <HeaderContainer/><br/><br/><br/>
+            <h3>Welcome to Trivia Time! </h3><br/><br/><br/>
+            <a href="/quiz">
+              <Button size="lg">Play Game!</Button>
+            </a><br/><br/>
+            <a href="/stats">
+              <Button size="lg">Show stats</Button>
+            </a><br></br>
+            </Col>
+          </Row>
         </Container>
       </>
     )
@@ -224,12 +271,16 @@ function Home(){
   else{
     return(
       <>
-        <HeaderContainer/>
-        <h3>Come back tomorrow to play again! </h3>
-        <Container>
-          <a href="/stats">
-            <Button>Show stats</Button>
-          </a><br></br>
+        <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+          <Row>
+            <Col>
+              <HeaderContainer/><br/><br/><br/>
+              <h3>Come back tomorrow to play again! </h3><br/><br/><br/>
+              <a href="/stats">
+              <Button size="lg">Show Stats</Button>
+              </a>
+            </Col>
+          </Row>
         </Container>
       </>
     )
@@ -240,19 +291,40 @@ function Home(){
 function Results(){
   return(
     <>
-      <h1>Results</h1>
-      <h2>Today's Score: {sessionStorage.getItem("score")}/5</h2>
+      <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+        <Row>
+          <Col>
+            <h1 style={{fontSize: 80}}>Results</h1>
+            <h2>Today's Score: {sessionStorage.getItem("score")}/5</h2>
+          </Col>
+        </Row>
+      </Container>
+      
     </>
   )
 }
 
 // Stats Page
 function ShowStatsPage(){
+  document.body.style = 'background: #C6D7FF;';
   return(
     <>
-      <HeaderContainer/>
-      <Stats/>
-      <BackToGameButton/>
+      <Container className="d-flex align-items-center justify-content-center text-center not-found-container">
+        <Row>
+          <Col>
+            <HeaderContainer/><br/><br/><br/><br/>
+              <Container style={
+                        {
+                        borderRadius: 25,
+                        border: '5px solid rgba(0, 0, 0)',
+                        padding: 20,
+                        }}>
+                <Stats/><br/><br/>
+              </Container>
+            <BackToGameButton/>
+          </Col>
+        </Row>
+      </Container>
     </>
   )
 }
@@ -331,14 +403,11 @@ export default function App(){
             </Route>
           </Routes>
         </UserProvider>
-    
-      
   );
 }
 
-
 // Standalone functions
-export function getCurrentDate(){
+function getCurrentDate(){
   let currentDate = new Date();
   let year = currentDate.getFullYear();
   let month = currentDate.getMonth() + 1; //  Months are 0 indexed because somebody, for some reason, thought that was a good idea.
@@ -347,7 +416,7 @@ export function getCurrentDate(){
   return dateString;
 }
 
-
+// This function simply shuffles an array
 function shuffleArray(array) {
   let index = array.length,
     randomIndex;
@@ -364,17 +433,18 @@ function shuffleArray(array) {
   return array;
 }
 
+// This function displays different text on the results screen depending on how the player did.
 function setResultText(score){
   let text;
   switch(parseInt(score)) {
     case 0:
-      text = "Wow. Zero points. Embarrassing...";
+      text = "Oof! Zero points...";
       break;
     case 1:
-      text = "Just 1 point hey? Well, you're not completely useless.";
+      text = "Well, 1 point is better than nothing!";
       break;
     case 2:
-      text = "2 points is almost a pass...almost...(you still failed though)";
+      text = "2 points, you knew something!";
       break;
     case 3:
       text = "Alright, alright, 3 points, not bad!";
