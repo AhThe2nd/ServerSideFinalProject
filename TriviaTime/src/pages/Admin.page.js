@@ -1,45 +1,46 @@
-import { Button } from '@mui/material'
-import { useContext } from 'react';
-import { UserContext } from '../contexts/user.context';
- 
-export default function Admin() {
- const { logOutUser } = useContext(UserContext);
- 
- // This function is called when the user clicks the "Logout" button.
- const logOut = async () => {
-   try {
-     // Calling the logOutUser function from the user context.
-     const loggedOut = await logOutUser();
-     // Now we will refresh the page, and the user will be logged out and
-     // redirected to the login page because of the <PrivateRoute /> component.
-     if (loggedOut) {
-       window.location.reload(true);
-     }
-   } catch (error) {
-     alert(error)
-   }
- }
+import Button from 'react-bootstrap/Button';
 
- const emptyDatabase = async () => {
-  alert("Database has been empted. Please upload a new questions JSON file in the proper format.");
-  const URL = '/empty';
-  fetch(URL, {method: 'DELETE'}).then((response) => {
-    if(!response.ok){
-      throw new Error('Something went wrong')
-    }
-  })
-  .catch((e) => {
-    console.log(e)
-  });
- } 
- return (
-   <>
-    <h1>Welcome, Administrator. Go ahead and administrate.</h1>
-    <Button variant="contained" onClick={emptyDatabase}>Empty Database</Button><br></br><br></br>
-    <h3>Upload New Questions</h3>
-    <input type="file"/><br/><br/>
-    <Button variant="contained">Upload</Button><br/><br/>
-    <Button variant="contained" onClick={logOut}>Logout</Button>
-   </>
- )
+export default function Admin() {
+
+  const refreshDatabase = e => {
+
+    const input = document.querySelector("#input");
+    const fileReader = new FileReader();
+    fileReader.readAsText(input.files[0], "UTF-8");
+    fileReader.onload = e => {
+      console.log(e.target.result);
+
+      let data = e.target.result;
+
+      console.log("DATAAAAA");
+      console.log(data);
+
+      const URL = '/upload';
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: data
+    };
+
+      fetch(URL, requestOptions).then((response) => {
+        if(!response.ok){
+          throw new Error('Something went wrong')
+        }
+        alert("Database has been emptied and repopulated with the selected questions.");
+      })
+      .catch((e) => {
+        console.log(e)
+      });
+    };
+  };
+  return (
+    <>
+      <h1>Upload Json file - Example</h1>
+
+      <input type="file" id="input"/>
+      <Button onClick={refreshDatabase}>Refresh Database</Button>
+      <br />
+    </>
+  );
 }

@@ -338,7 +338,7 @@ export default function App(){
 
 
 // Standalone functions
-function getCurrentDate(){
+export function getCurrentDate(){
   let currentDate = new Date();
   let year = currentDate.getFullYear();
   let month = currentDate.getMonth() + 1; //  Months are 0 indexed because somebody, for some reason, thought that was a good idea.
