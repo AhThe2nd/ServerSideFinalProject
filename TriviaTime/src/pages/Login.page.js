@@ -1,18 +1,16 @@
 import { Button, TextField } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/user.context";
  
 const Login = () => {
  const navigate = useNavigate();
  const location = useLocation();
  
- // We are consuming our user-management context to
- // get & set the user details here
+ // Consume contex to set user values
  const { user, fetchUser, emailPasswordLogin } = useContext(UserContext);
  
- // We are using React's "useState" hook to keep track
- //  of the form values.
+ // Keep track of form values
  const [form, setForm] = useState({
    email: "",
    password: ""
@@ -31,11 +29,7 @@ const Login = () => {
    navigate(redirectTo ? redirectTo : "/admin");
  }
  
- // Once a user logs in to our app, we don’t want to ask them for their
- // credentials again every time the user refreshes or revisits our app, 
- // so we are checking if the user is already logged in and
- // if so we are redirecting the user to the home page.
- // Otherwise we will do nothing and let the user to login.
+ // Check if user is already logged in and redirect accordingly
  const loadUser = async () => {
    if (!user) {
      const fetchedUser = await fetchUser();
@@ -46,11 +40,8 @@ const Login = () => {
    }
  }
  
- // This useEffect will run only once when the component is mounted.
- // Hence this is helping us in verifying whether the user is already logged in
- // or not.
  useEffect(() => {
-   loadUser(); // eslint-disable-next-line react-hooks/exhaustive-deps
+   loadUser();
  }, []);
  
  // This function gets fired when the user clicks on the "Login" button.
@@ -74,7 +65,7 @@ const Login = () => {
  };
  
  return <form style={{ display: "flex", flexDirection: "column", maxWidth: "300px", margin: "auto" }}>
-   <h1>Login</h1>
+   <h1>Administrator Login</h1>
    <TextField
      label="Email"
      type="email"
