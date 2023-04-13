@@ -18,6 +18,17 @@ The file is called overwrite_or_append.json and is included in the dropbox. It s
 ### Appending to the database
 This operation is similar except it simply appends questions rather than overwriting the existing database.
 
+# Known Issues
+## These are some known issues/bugs that I would resolve if I had the time but I need to switch over to the Capstone project.
+ - Display is a little long for some shorter phones and a little scrolling may be required from the user.
+ - Port Number is still included in the URL on AWS. I have looked into some fixes for this but need to devote time to other courses.
+ 
+# Future Changes
+## These are some changes that I would make in the future if I were to continue developing this project
+ - Refine front end and add more styling to the elements
+ - Responsive styling that changes colors of buttons depending on which answer was chosen. This was originally in my System Proposal but I did not have time to implement
+ - A countdown until the next game is ready. This was also included in System Proposal but did not have time to implement due to other courses.
+
 # IMPORTANT 
 
 ## When you are done testing the routes, please run the overwrite route with the questions.json file to reset the actual questions. If you complete a game but want to test that the routes worked, set "lastGameDate" in LOCAL STORAGE to be any date but today and set "canPlay" in LOCAL STORAGE to "true" and reload the app.
