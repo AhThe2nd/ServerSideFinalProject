@@ -8,7 +8,7 @@ If they start a game, they are presented with 5 questions pulled from a mongo da
 and can then view their all-time stats again. If they return to the home screen they are presented with a message that says to return tomorrow to play again.
 
 ## Administration
-There is an administration route located at /admin. This is a protected route and you must login first at /login. I did not feel it was necessary to link to these routes from within the app so you will have to navigate to them manually. Eric, your credentials will be in the dropbox
+There is an administration route located at /admin. This is a protected route and you must login first at /login. I did not feel it was necessary to link to these routes from within the app <strong>so you will have to start by manually navigating to the /login route but it will take you to /admin upon log in.</strong> Eric, your credentials will be in the dropbox
 along with some sample JSON files for use in the administration route.
 
 ### Overwriting the database
