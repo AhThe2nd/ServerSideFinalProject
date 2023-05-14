@@ -1,4 +1,4 @@
-# ServerSideFinalProject (Eric, please read)
+# ServerSideFinalProject
 
 Welcome to the repository for my Server Side Programming final project. This repo contains a trivia react app call TriviaTime.
 
